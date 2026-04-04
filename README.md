@@ -1,34 +1,23 @@
-# udemy_fast_api_mvp
-# docker compose down && docker system prune --all && docker volume prune --all
-## docker exect -it python service unicorn main::app --host 0.0.0.0 --port 8050 --reload
+🍽️ PyMenu: Sistema de Gestión para Restaurantes
+Este proyecto es una solución Fullstack moderna diseñada para digitalizar la experiencia de usuario en restaurantes. Permite a los comensales acceder a un menú interactivo mediante códigos QR y ofrece a los administradores un panel de control robusto para gestionar platos, precios y existencias en tiempo real.
 
-# Código para creación bucket en localstack
-#entrar al contenedor
+🚀 Características Principales
+Menú Interactivo: Interfaz responsiva (Mobile-first) para clientes, con filtros por categorías e información de alérgenos.
 
-docker exec -it localstack bash
+Panel Administrativo: Gestión completa de CRUD (Crear, Leer, Actualizar, Borrar) para el menú.
 
-# crear bucket
+Seguridad: Autenticación de personal mediante OAuth2 y JWT.
 
-docker exec -it localstack awslocal s3 mb s3://curso-udemy
+Infraestructura Cloud: Almacenamiento de imágenes en AWS S3 y mensajería desacoplada con AWS SQS.
 
-# listar bucket
+Base de Datos Robusta: Modelado de datos con SQLModel, migraciones con Alembic y persistencia en PostgreSQL.
 
-docker exec -it localstack awslocal s3 ls
+🛠️ Stack Tecnológico
+Backend: Python 3.12, FastAPI, Pydantic, SQLModel.
 
-# Listar objetos en el bucket "mi-bucket"
+Frontend: React, TypeScript, Tailwind/Bootstrap.
 
-docker exec -it localstack awslocal s3 ls s3://curso-udemy/
+DevOps & Cloud: Docker, Docker Compose, AWS (EC2, S3, SQS), LocalStack.
 
-# Listar recursivamente (todos los archivos y subcarpetas)
-
-docker exec -it localstack awslocal s3 ls s3://curso-udemy/ --recursive
-
-# borrar bucket
-
-docker exec -it localstack awslocal s3 rb s3://curso-udemy2 --force
-
-# alembic
-docker exec -it python_service alembic init alembic
-docker exec -it python_service alembic revision --autogenerate -m "Tabla estado"
-docker exec -it python_service alembic upgrade head
+Base de Datos: PostgreSQL.
 

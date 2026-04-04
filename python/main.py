@@ -3,8 +3,9 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.exceptions import RequestValidationError
-#rutas
-from router.ejemplo_router import router as ejemplo_router
+
+# rutas
+
 from router.upload_router import router as upload_router
 
 
@@ -12,50 +13,39 @@ from router.upload_router import router as upload_router
 app = FastAPI()
 
 # agregamos las rutas al app
-app.include_router(ejemplo_router)
+
 app.include_router(upload_router)
+
 
 @app.get("/")
 def index():
-    return JSONResponse(
-        status_code = status.HTTP_200_OK,
-        content={
-            "estado": "oks"
-        }
-    )
+    return JSONResponse(status_code=status.HTTP_200_OK, content={"estado": "oks"})
+
 
 # manejador de errores para 404
 @app.exception_handler(status.HTTP_404_NOT_FOUND)
-async def not_found(request:Request, exc: Exception):
+async def not_found(request: Request, exc: Exception):
     return JSONResponse(
-        status_code = status.HTTP_404_NOT_FOUND,
-        content={
-            "estado": "error",
-            "mensaje": "Recurso no encontrado"
-        }
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"estado": "error", "mensaje": "Recurso no encontrado"},
     )
+
 
 # para metodos http no usados
 @app.exception_handler(StarletteHTTPException)
-async def method_not_allowed(request:Request, exc: StarletteHTTPException):
+async def method_not_allowed(request: Request, exc: StarletteHTTPException):
     if exc.status_code == status.HTTP_405_METHOD_NOT_ALLOWED:
         return JSONResponse(
-            status_code = status.HTTP_405_METHOD_NOT_ALLOWED,
-            content={
-                "estado": "error",
-                "mensaje": "Metodo no permitido"
-            }
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
+            content={"estado": "error", "mensaje": "Metodo no permitido"},
         )
     # si no es un error de metodo no permitido, devolvemos el error original
     return JSONResponse(
-        status_code = exc.status_code,
-        content={
-            "estado": "error",
-            "mensaje": exc.detail
-        }
+        status_code=exc.status_code, content={"estado": "error", "mensaje": exc.detail}
     )
 
-#validaciones dto
+
+# validaciones dto
 @app.exception_handler(RequestValidationError)
 async def manejar_errores_validacion(request: Request, exc: RequestValidationError):
     errores_personalizados = []
@@ -78,16 +68,13 @@ async def manejar_errores_validacion(request: Request, exc: RequestValidationErr
         elif mensaje == "Field required":
             mensaje = f"El campo {campo} es obligatorio"
 
-        errores_personalizados.append({
-            "campo": campo,
-            "mensaje": mensaje
-        })
+        errores_personalizados.append({"campo": campo, "mensaje": mensaje})
 
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={
             "estado": "error",
             "mensaje": "Errores de validación",
-            "errores": errores_personalizados
+            "errores": errores_personalizados,
         },
     )
