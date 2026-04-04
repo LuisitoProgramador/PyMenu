@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: laravel-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: fastapi
+      POSTGRES_USER: fastapi
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - red_fastapi
+
+  node:
+    build:
+      context: ./docker/node
+    container_name: node_service
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./node:/app
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    networks:
+      - red_fastapi
+    depends_on:
+      - postgres
+      - localstack
+
+  python:
+    build:
+      context: ./docker/python
+    container_name: python_service
+    volumes:
+      - ./python:/usr/src/app
+    working_dir: /usr/src/app
+    command: tail -f /dev/null
+    ports:
+      - "8050:8050"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MONGO_URI=mongodb://mongo:27017/mi_db
+    networks:
+      - red_fastapi
+    depends_on:
+      - postgres
+      - localstack
+
+  localstack:
+    image: localstack/localstack:3
+    container_name: localstack
+    restart: always
+    environment:
+      - SERVICES=sqs,lambda,ses,s3,dynamodb
+      - AWS_DEFAULT_REGION=us-west-2
+      - DEBUG=1
+      - LAMBDA_EXECUTOR=local
+      - PERSISTENCE=1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - SES_DISABLE_EMAIL_VERIFICATION=1
+    ports:
+      - "8000:4566"
+    volumes:
+      - "${LOCALSTACK_DATA_DIR:-./localstack-data}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - red_fastapi
+
+volumes:
+  pgdata:
+
+networks:
+  red_fastapi:
+    name: red_fastapi
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.42.12.0/28
+          gateway: 172.42.12.1

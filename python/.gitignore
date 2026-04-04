@@ -1,0 +1,41 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+venv/
+env/
+ENV/
+build/
+dist/
+
+# --- Base de Datos ---
+# Si usas SQLite local para pruebas, no la subas
+*.db
+*.sqlite3
+
+# --- Variables de Entorno (CRÍTICO) ---
+# Nunca subas tus contraseñas o tokens
+.env
+.env.local
+.env.*
+!.env.example
+
+# --- Docker & LocalStack ---
+.docker/
+localstack-data/
+node_modules/
+
+# --- IDEs & Editores ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# --- Alembic ---
+# No ignoramos las migraciones (son necesarias), 
+# pero sí los archivos temporales si existieran
+alembic/__pycache__/
