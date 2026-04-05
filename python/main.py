@@ -7,6 +7,7 @@ from fastapi.exceptions import RequestValidationError
 # rutas
 
 from router.upload_router import router as upload_router
+from router.estado_router import router as estado_router
 
 
 # inicializamos fastapi
@@ -15,6 +16,7 @@ app = FastAPI()
 # agregamos las rutas al app
 
 app.include_router(upload_router)
+app.include_router(estado_router)
 
 
 @app.get("/")
